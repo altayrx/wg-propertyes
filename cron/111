@@ -1,0 +1,25 @@
+			$gallery = Array();
+			$n = 0;
+			foreach ($p['gallery'] as $gi) {
+				$gallery['n' . $n] = CFile::MakeFileArray($_SERVER["DOCUMENT_ROOT"] . "/upload/transfer/" . $gi);
+				$n++;
+			}
+			if (count($gallery) > 0) {
+				$db_props = CIBlockElement::GetProperty(1, $PRODUCT_ID, "sort", "asc", Array("CODE"=>"GALLERY"));
+				while($ar_props = $db_props->Fetch()) { 
+					if ($ar_props["VALUE"]) {
+						$ar_val = $ar_props["VALUE"];
+						$ar_val_id = $ar_props["PROPERTY_VALUE_ID"];
+				
+						$arr[$ar_props['PROPERTY_VALUE_ID']] = Array("VALUE" => Array("del" => "Y"));
+						CIBlockElement::SetPropertyValueCode($PRODUCT_ID, "GALLERY", $arr );
+						CFile::Delete($ar_props['VALUE']);
+					}
+				}
+
+				CIBlockElement::SetPropertyValueCode(
+					$PRODUCT_ID,
+					'GALLERY',
+					$gallery
+				);
+			}
